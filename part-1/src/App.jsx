@@ -1,62 +1,41 @@
+import {useState} from 'react';
+
+const Button = ({handleClick, text}) => {
+  return <button onClick={handleClick}>{text}</button>;
+};
+
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10,
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7,
-      },
-      {
-        name: 'State of a component',
-        exercises: 14,
-      },
-    ],
+  // save clicks of each button to its own state
+  const [good, setGood] = useState (0);
+  const [neutral, setNeutral] = useState (0);
+  const [bad, setBad] = useState (0);
+  console.log ('Good on render is: ', good);
+  console.log ('neutral on render is: ', neutral);
+  console.log ('bad on render is: ', bad);
+  const handleClickGood = () => {
+    console.log ('Good before update is: ', good);
+    setGood (good + 1);
+  };
+  const handleClickNeutral = () => {
+    console.log ('Neutral before update is: ', neutral);
+    setNeutral (neutral + 1);
+  };
+  const handleClickBad = () => {
+    console.log ('Bad before update is: ', bad);
+    setBad (bad + 1);
   };
   return (
     <div>
-      <Header course={course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
+      <h1>give feedback</h1>
+      <Button handleClick={handleClickGood} text={'Good'} />
+      <Button handleClick={handleClickNeutral} text={'Neutral'} />
+      <Button handleClick={handleClickBad} text={'Bad'} />
+      <h1>statistics</h1>
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
     </div>
   );
 };
 
 export default App;
-
-const Header = props => {
-  return <h1>{props.course}</h1>;
-};
-
-const Total = props => {
-  return (
-    <p>
-      Number of exercises{' '}
-      {props.parts[0].exercises +
-        props.parts[1].exercises +
-        props.parts[2].exercises}
-    </p>
-  );
-};
-
-const Content = props => {
-  console.log (props);
-  return (
-    <div>
-      <Part part={props.parts[0].name} exercise={props.parts[0].exercises} />
-      <Part part={props.parts[1].name} exercise={props.parts[1].exercises} />
-      <Part part={props.parts[2].name} exercise={props.parts[2].exercises} />
-    </div>
-  );
-};
-
-const Part = props => {
-  return (
-    <p>
-      {props.part} {props.exercise}
-    </p>
-  );
-};
