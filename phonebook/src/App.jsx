@@ -1,7 +1,9 @@
-import {useEffect} from 'react';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import personService from './services/persons';
-import Notification from './components/Notification';
+import {
+  NotificationFailure,
+  NotificationSuccess,
+} from './components/Notification';
 import './index.css';
 const PhonebookEntry = ({name, number, handleDelete}) => {
   return (
@@ -16,7 +18,8 @@ const App = () => {
   const [persons, setPersons] = useState ([]);
   const [newName, setNewName] = useState ('');
   const [number, setNumber] = useState ('');
-  const [message, setMessage] = useState ('test123');
+  const [successMessage, setSuccessMessage] = useState (null);
+  const [failureMessage, setFailureMessage] = useState (null);
   const handlePhoneInputChange = e => {
     console.log (e.target.value);
     setNumber (e.target.value);
@@ -43,13 +46,21 @@ const App = () => {
                     : p
               )
             );
+          })
+          .catch (() => {
+            setFailureMessage (
+              `Information of ${existingPersonObj.name} has already been deleted from the server`
+            );
+            setTimeout (() => {
+              setFailureMessage (null);
+            }, 5000);
           });
       }
     } else {
       personService.create (personObj).then (newPerson => {
-        setMessage (`${personObj.name} successfully added to contacts`);
+        setSuccessMessage (`${personObj.name} successfully added to contacts`);
         setTimeout (() => {
-          setMessage (null);
+          setSuccessMessage (null);
         }, 5000);
         setPersons (persons.concat (newPerson));
         setNewName ('');
@@ -81,7 +92,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <NotificationSuccess message={successMessage} />
+      <NotificationFailure message={failureMessage} />
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleInputChange} />
