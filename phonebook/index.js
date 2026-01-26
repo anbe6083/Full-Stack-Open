@@ -1,5 +1,6 @@
 import express from "express";
 const app = express();
+app.use(express.json());
 let persons = [
   {
     id: "1",
@@ -42,6 +43,24 @@ app.delete("/api/persons/:id", (req, res) => {
   persons = persons.filter((p) => p.id !== id);
   res.status(204).end();
 });
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+  if (!body.name || !body.number) {
+    return res.status(400).json({
+      error: "name or number is missing",
+    });
+  }
+  const person = {
+    id: Math.floor(Math.random() * 100000) + 1,
+    name: body.name,
+    number: body.number,
+  };
+  persons = persons.concat(person);
+  console.log(persons);
+  res.json(person);
+});
+
 const PORT = 3003;
 app.listen(PORT);
 console.log("Server running on port", PORT);
