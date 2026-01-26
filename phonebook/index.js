@@ -51,11 +51,20 @@ app.post("/api/persons", (req, res) => {
       error: "name or number is missing",
     });
   }
+  const personExists = persons.find(
+    (p) => p.name === body.name || p.number === body.number,
+  );
+  if (personExists) {
+    return res.status(400).json({
+      error: "Name or number already exists",
+    });
+  }
   const person = {
     id: Math.floor(Math.random() * 100000) + 1,
     name: body.name,
     number: body.number,
   };
+
   persons = persons.concat(person);
   console.log(persons);
   res.json(person);
