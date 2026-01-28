@@ -18,7 +18,7 @@ const App = () => {
       })
       .catch (e => {
         setErrorMessage (
-          `Note ${note.content} was already removed from the server`
+          `Note '${note.content}' was already removed from the server`
         );
         setTimeout (() => {
           setErrorMessage (null);
