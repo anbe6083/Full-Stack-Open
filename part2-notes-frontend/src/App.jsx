@@ -3,11 +3,11 @@ import {useEffect, useState} from 'react';
 import Note from './components/Note';
 import noteService from './services/notes';
 import './index.css';
-import Notification from './components/Notification';
+import {Notification} from './components/Notification';
 const App = () => {
   const [notes, setNotes] = useState ([]);
   const [newNote, setNewNote] = useState ('a new note...');
-  const [errorMessage, setErrorMessage] = useState ('some error happened...');
+  const [errorMessage, setErrorMessage] = useState (null);
   const toggleImportanceOf = id => {
     const note = notes.find (n => n.id === id);
     const changedNote = {...note, important: !note.important};
