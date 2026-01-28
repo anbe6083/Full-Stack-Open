@@ -19,11 +19,11 @@
   "type": "module",
   "main": "eslint.config.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "start": "node index.js",
     "server": "json-server -p 3001 db.json"
   },
   "dependencies": {
