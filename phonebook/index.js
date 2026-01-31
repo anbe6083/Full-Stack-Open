@@ -5,6 +5,12 @@ import Person from "./models/person.js";
 
 const app = express();
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  next(error);
+};
+
 app.use(express.static("dist"));
 app.use(express.json());
 morgan.token("body", (req) => JSON.stringify(req.body));
@@ -71,10 +77,14 @@ app.get("/info", (req, res) => {
 
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
-  persons = persons.filter((p) => p.id !== id);
-  res.status(204).end();
+  Person.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
-
 app.post("/api/persons", (req, res) => {
   const body = req.body;
   if (!body.name || !body.number) {
@@ -97,6 +107,7 @@ const unknownEndpoint = (req, res) => {
 };
 
 app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT);
