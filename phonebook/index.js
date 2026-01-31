@@ -1,5 +1,8 @@
+import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
+import Person from "./models/person.js";
+
 const app = express();
 
 app.use(express.static("dist"));
@@ -47,14 +50,23 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/persons", (req, res) => {
-  res.writeHead(200, { "Content-type": "application/json" });
-  res.end(JSON.stringify(persons));
+  Person.find({}).then((persons) => {
+    res.json(persons);
+  });
+});
+
+app.get("/api/persons/:id", (req, res) => {
+  Person.findById(req.params.id).then((person) => {
+    res.json(person);
+  });
 });
 
 app.get("/info", (req, res) => {
   const date = new Date();
-  const count = persons.length;
-  res.send(`Phonebook has info for ${count} people ${date}`);
+  Person.find({}).then((persons) => {
+    const count = persons.length;
+    res.send(`Phonebook has info for ${count} people ${date}`);
+  });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -70,23 +82,14 @@ app.post("/api/persons", (req, res) => {
       error: "name or number is missing",
     });
   }
-  const personExists = persons.find(
-    (p) => p.name === body.name || p.number === body.number,
-  );
-  if (personExists) {
-    return res.status(400).json({
-      error: "Name or number already exists",
-    });
-  }
-  const person = {
-    id: Math.floor(Math.random() * 100000) + 1,
+
+  const person = new Person({
     name: body.name,
     number: body.number,
-  };
-
-  persons = persons.concat(person);
-  console.log(persons);
-  res.json(person);
+  });
+  person.save().then((savedPerson) => {
+    res.json(savedPerson);
+  });
 });
 
 const unknownEndpoint = (req, res) => {
@@ -95,6 +98,6 @@ const unknownEndpoint = (req, res) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT;
 app.listen(PORT);
 console.log("Server running on port", PORT);
