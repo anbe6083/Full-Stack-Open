@@ -85,6 +85,22 @@ app.delete("/api/persons/:id", (req, res) => {
       next(err);
     });
 });
+
+app.put("/api/persons/:id", (req, res) => {
+  const { name, number } = req.body;
+  console.log(req.body);
+  Person.findById(req.params.id).then((person) => {
+    if (!person) {
+      return res.status(404).end();
+    }
+    person.name = name;
+    person.number = number;
+    return person.save().then((updatedPerson) => {
+      res.json(updatedPerson);
+    });
+  });
+});
+
 app.post("/api/persons", (req, res) => {
   const body = req.body;
   if (!body.name || !body.number) {
