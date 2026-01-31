@@ -21,8 +21,26 @@ let notes = [
     important: true,
   },
 ];
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+
+const requestLogger = (request, response, next) => {
+  console.log("Method: ", request.method);
+  console.log("Path: ", request.path);
+  console.log("Body: ", request.body);
+  console.log("---");
+  next();
+};
+
 app.use(express.static("dist"));
 app.use(express.json());
+app.use(requestLogger);
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
@@ -35,9 +53,17 @@ app.get("/api/notes", (request, response) => {
 });
 
 app.get("/api/notes/:id", (request, response) => {
-  Note.findById(request.params.id).then((note) => {
-    response.json(note);
-  });
+  Note.findById(request.params.id)
+    .then((note) => {
+      if (note) {
+        response.json(note);
+      } else {
+        response.status(400).send({ error: "malformed id" });
+      }
+    })
+    .catch((e) => {
+      next(e);
+    });
 });
 
 const generateId = () => {
@@ -65,12 +91,36 @@ app.post("/api/notes", (request, response) => {
 });
 
 app.delete("/api/notes/:id", (request, response) => {
-  const id = request.params.id;
-  notes = notes.filter((note) => note.id !== id);
-
-  response.status(204).end();
+  Note.findByIdAndDelete(request.params.id)
+    .then((res) => {
+      res.status(204).end();
+    })
+    .catch((err) => next(err));
 });
 
+app.put("/api/notes/:id", (req, res, next) => {
+  const { content, important } = req.body;
+  Note.findById(req.params.id).then((note) => {
+    if (!note) {
+      return res.status(404).end();
+    }
+    note.content = content;
+    note.important = important;
+
+    return note
+      .save()
+      .then((updatedNote) => {
+        res.json(updatedNote);
+      })
+      .catch((err) => next(err));
+  });
+});
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
