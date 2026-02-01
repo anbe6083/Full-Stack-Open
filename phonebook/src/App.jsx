@@ -72,6 +72,9 @@ const App = () => {
         })
         .catch (e => {
           setFailureMessage (e.response.data.error);
+          setTimeout (() => {
+            setFailureMessage (null);
+          }, 5000);
         });
     }
   };
