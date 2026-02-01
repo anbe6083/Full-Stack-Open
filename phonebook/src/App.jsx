@@ -57,15 +57,22 @@ const App = () => {
           });
       }
     } else {
-      personService.create (personObj).then (newPerson => {
-        setSuccessMessage (`${personObj.name} successfully added to contacts`);
-        setTimeout (() => {
-          setSuccessMessage (null);
-        }, 5000);
-        setPersons (persons.concat (newPerson));
-        setNewName ('');
-        setNumber ('');
-      });
+      personService
+        .create (personObj)
+        .then (newPerson => {
+          setSuccessMessage (
+            `${personObj.name} successfully added to contacts`
+          );
+          setTimeout (() => {
+            setSuccessMessage (null);
+          }, 5000);
+          setPersons (persons.concat (newPerson));
+          setNewName ('');
+          setNumber ('');
+        })
+        .catch (e => {
+          setFailureMessage (e.response.data.error);
+        });
     }
   };
 

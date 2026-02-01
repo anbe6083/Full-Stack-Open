@@ -7,7 +7,11 @@ const app = express();
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
-
+  if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
+  } else if (error.name === "CastError") {
+    return response.status(400).json({ error: error.message });
+  }
   next(error);
 };
 
@@ -101,7 +105,7 @@ app.put("/api/persons/:id", (req, res) => {
   });
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
   if (!body.name || !body.number) {
     return res.status(400).json({
@@ -113,9 +117,12 @@ app.post("/api/persons", (req, res) => {
     name: body.name,
     number: body.number,
   });
-  person.save().then((savedPerson) => {
-    res.json(savedPerson);
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson);
+    })
+    .catch((e) => next(e));
 });
 
 const unknownEndpoint = (req, res) => {
