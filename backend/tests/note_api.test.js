@@ -7,29 +7,27 @@ const Note = require("../models/note");
 const helper = require("./test_helper");
 const api = supertest(app);
 
-describe("When there is initially some notes saved", () => {
-  beforeEach(async () => {
-    await Note.deleteMany({});
-    await Note.insertMany(helper.initialNotes);
-  });
-  test("notes are returned as json", async () => {
-    await api
-      .get("/api/notes")
-      .expect(200)
-      .expect("Content-type", /application\/json/);
-  });
+beforeEach(async () => {
+  await Note.deleteMany({});
+  await Note.insertMany(helper.initialNotes);
+});
+test("notes are returned as json", async () => {
+  await api
+    .get("/api/notes")
+    .expect(200)
+    .expect("Content-type", /application\/json/);
+});
 
-  test("all notes are returned", async () => {
-    const response = await api.get("/api/notes");
-    assert.strictEqual(response.body.length, helper.initialNotes.length);
-  });
+test("all notes are returned", async () => {
+  const response = await api.get("/api/notes");
+  assert.strictEqual(response.body.length, helper.initialNotes.length);
+});
 
-  test("a specific note is within the returned notes", async () => {
-    const response = await api.get("/api/notes");
+test("a specific note is within the returned notes", async () => {
+  const response = await api.get("/api/notes");
 
-    const contents = response.body.map((e) => e.content);
-    assert.strictEqual(contents.includes("HTML is easy"), true);
-  });
+  const contents = response.body.map((e) => e.content);
+  assert.strictEqual(contents.includes("HTML is easy"), true);
 });
 
 test("A valid note can be added", async () => {
