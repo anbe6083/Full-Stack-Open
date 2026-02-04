@@ -84,3 +84,37 @@ test("If url is missing return 400", async () => {
   });
   await api.post("/api/blogs").send(request).expect(400);
 });
+
+test("Should be able to delete a blog", async () => {
+  const blogs = await api.get("/api/blogs");
+  const blogToBeDeleted = blogs.body[0];
+  await api.delete(`/api/blogs/${blogToBeDeleted.id}`).expect(204);
+  const blogsAtEnd = await Blog.find({});
+  const ids = blogsAtEnd.map((b) => b.id);
+  assert(!ids.includes(blogToBeDeleted.id));
+});
+
+test("Should be able to update a blog", async () => {
+  const blogs = await api.get("/api/blogs");
+  const blogToBeUpdated = blogs.body[0];
+  const expected = 99999;
+  blogToBeUpdated.likes = expected;
+  await api
+    .put(`/api/blogs/${blogToBeUpdated.id}`)
+    .send(blogToBeUpdated)
+    .expect(200);
+  const blogAfter = await api.get(`/api/blogs/${blogToBeUpdated.id}`);
+  assert.strictEqual(blogAfter.body.likes, expected);
+});
+
+test("Should return a 404 if updating a note that doesnt exist", async () => {
+  const blogs = await api.get("/api/blogs");
+  const blogToBeUpdated = blogs.body[0];
+  const newLikes = 99999;
+  await api.delete(`/api/blogs/${blogToBeUpdated.id}`);
+  blogToBeUpdated.likes = newLikes;
+  await api
+    .put(`/api/blogs/${blogToBeUpdated.id}`)
+    .send(blogToBeUpdated)
+    .expect(404);
+});
