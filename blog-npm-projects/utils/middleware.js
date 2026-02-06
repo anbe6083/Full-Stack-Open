@@ -14,8 +14,19 @@ const errorHandler = (error, request, response, next) => {
       error:
         "Username and password is not valid. Must be greater than 3 characters",
     });
+  } else if (error.name === "JsonWebTokenError") {
+    return response.status(401).json({ error: "token invalid" });
   }
   next();
 };
 
-module.exports = { errorHandler };
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get("Authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
+  } else {
+    request.token = null;
+  }
+  next();
+};
+module.exports = { errorHandler, tokenExtractor };
