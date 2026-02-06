@@ -4,6 +4,8 @@ const Blog = require("../models/blogs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const logger = require("../utils/logger");
+const middleware = require("../utils/middleware");
+
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", {
     username: 1,
@@ -13,7 +15,7 @@ blogsRouter.get("/", async (request, response) => {
   response.json(blogs);
 });
 
-blogsRouter.post("/", async (request, response) => {
+blogsRouter.post("/", middleware.userExtractor, async (request, response) => {
   if (request.body.url === undefined || request.body.title === undefined) {
     response.status(400).json({ error: "url or title is missing" });
     return;
@@ -34,21 +36,25 @@ blogsRouter.post("/", async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
-  const userId = request.user.id;
+blogsRouter.delete(
+  "/:id",
+  middleware.userExtractor,
+  async (request, response) => {
+    const userId = request.user.id;
 
-  const blog = await Blog.findById(request.params.id);
-  if (!blog) {
-    return response.status(404).end();
-  }
-  if (userId === null || userId !== blog.user.toString()) {
-    return response
-      .status(401)
-      .json({ error: "User does not match user who created the blog" });
-  }
-  await blog.deleteOne();
-  response.status(204).end();
-});
+    const blog = await Blog.findById(request.params.id);
+    if (!blog) {
+      return response.status(404).end();
+    }
+    if (userId === null || userId !== blog.user.toString()) {
+      return response
+        .status(401)
+        .json({ error: "User does not match user who created the blog" });
+    }
+    await blog.deleteOne();
+    response.status(204).end();
+  },
+);
 
 blogsRouter.put("/:id", async (request, response, next) => {
   const blog = await Blog.findById(request.params.id);
