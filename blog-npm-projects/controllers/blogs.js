@@ -1,21 +1,21 @@
 const blogsRouter = require("express").Router();
 const blogs = require("../models/blogs");
 const Blog = require("../models/blogs");
+const User = require("../models/user");
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({});
   response.json(blogs);
 });
 
-blogsRouter.post("/", (request, response) => {
+blogsRouter.post("/", async (request, response) => {
   if (request.body.url === undefined || request.body.title === undefined) {
     response.status(400).end();
     return;
   }
   if (request.body.likes === undefined) request.body.likes = 0;
   const blog = new Blog(request.body);
-  blog.save().then((result) => {
-    response.status(201).json(result);
-  });
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog);
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
@@ -32,12 +32,8 @@ blogsRouter.put("/:id", async (request, response, next) => {
   blog.author = request.body.author;
   blog.url = request.body.url;
   blog.likes = request.body.likes;
-  blog
-    .save()
-    .then((res) => {
-      response.status(200).json(res);
-    })
-    .catch((e) => next(e));
+  const savedBlog = await blog.save().catch((e) => next(e));
+  response.status(200).json(savedBlog);
 });
 
 blogsRouter.get("/:id", async (request, response) => {
