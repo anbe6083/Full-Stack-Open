@@ -14,7 +14,6 @@ blogsRouter.get("/", async (request, response) => {
 });
 
 blogsRouter.post("/", async (request, response) => {
-  logger.info("token is", request);
   const decodedToken = jwt.decode(request.token, process.env.SECRET);
   if (decodedToken === null || !decodedToken.id) {
     return response.status(401).json({ error: "Token invalid" });
@@ -41,7 +40,19 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id);
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  const userId = decodedToken.id;
+
+  const blog = await Blog.findById(request.params.id);
+  if (!blog) {
+    return response.status(404).end();
+  }
+  if (userId === null || userId !== blog.user.toString()) {
+    return response
+      .status(401)
+      .json({ error: "User does not match user who created the blog" });
+  }
+  await blog.deleteOne();
   response.status(204).end();
 });
 
