@@ -14,17 +14,12 @@ blogsRouter.get("/", async (request, response) => {
 });
 
 blogsRouter.post("/", async (request, response) => {
-  const decodedToken = jwt.decode(request.token, process.env.SECRET);
-  if (decodedToken === null || !decodedToken.id) {
-    return response.status(401).json({ error: "Token invalid" });
-  }
-  const user = await User.findById(decodedToken.id);
   if (request.body.url === undefined || request.body.title === undefined) {
     response.status(400).json({ error: "url or title is missing" });
     return;
   }
   if (request.body.likes === undefined) request.body.likes = 0;
-
+  const user = request.user;
   const blog = new Blog({
     title: request.body.title,
     author: request.body.author,
@@ -40,8 +35,7 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  const userId = decodedToken.id;
+  const userId = request.user.id;
 
   const blog = await Blog.findById(request.params.id);
   if (!blog) {
