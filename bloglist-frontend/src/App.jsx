@@ -1,3 +1,4 @@
+import Togglable from './components/Togglable';
 import BlogForm from './components/BlogForm'
 import {useState, useEffect} from 'react';
 import Blog from './components/Blog';
@@ -11,9 +12,7 @@ const App = () => {
   const [user, setUser] = useState (null);
   const [notification, setNotification] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+
   useEffect (() => {
     blogService.getAll ().then (blogs => setBlogs (blogs));
   }, []);
@@ -58,42 +57,8 @@ const App = () => {
     );
   };
 
-  const Togglable = (props) => {
-    const [visible, setVisible] = useState(false)
-    const hideWhenVisible = {display: visible ? "" : "none"}
-    const showWhenVisible = {display: visible ? "none" : ""}
-    const toggleVisibility = () => {
-      setVisible(!visible)
-    }
-    return (
-      <div>
-      <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
-      </div>
-      <div style={showWhenVisible}>
-        <div>
-          {props.children}
-        </div>
-        <button onClick={toggleVisibility}>
-          cancel
-        </button>
-      </div>
-      </div>
-    )
-  }
 
-  const handleSubmitBlog = async (e) => {
-    e.preventDefault()
-    await blogService.createBlog({title, author, url})
-    setBlogs(blogs.concat({title, author, url}))
-    setNotification(`A new blog: "${title}" by ${author} was added`)
-    setTitle("")
-    setAuthor("")
-    setUrl("")
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
-  }
+
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -140,10 +105,11 @@ const App = () => {
       <h2>blogs</h2>
       {!user && loginForm ()}
       {user && blogs.map (blog => <Blog key={blog.id} blog={blog} />)}
-      <Togglable buttonLabel={'Create New Blog'}>
+      <Togglable buttonLabel={'Create New Blog'} closeLabel={'Cancel'}>
       <h1>Create New</h1>
       {user && (
-        <BlogForm />
+        <BlogForm setNotification={setNotification} setBlogs={setBlogs} blogs={blogs} />
+      
       )}
       </Togglable>
 
