@@ -57,6 +57,30 @@ const App = () => {
     );
   };
 
+  const Togglable = (props) => {
+    const [visible, setVisible] = useState(false)
+    const hideWhenVisible = {display: visible ? "" : "none"}
+    const showWhenVisible = {display: visible ? "none" : ""}
+    const toggleVisibility = () => {
+      setVisible(!visible)
+    }
+    return (
+      <div>
+      <div style={hideWhenVisible}>
+        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+      </div>
+      <div style={showWhenVisible}>
+        <div>
+          {props.children}
+        </div>
+        <button onClick={toggleVisibility}>
+          cancel
+        </button>
+      </div>
+      </div>
+    )
+  }
+
   const handleSubmitBlog = async (e) => {
     e.preventDefault()
     await blogService.createBlog({title, author, url})
@@ -115,6 +139,7 @@ const App = () => {
       <h2>blogs</h2>
       {!user && loginForm ()}
       {user && blogs.map (blog => <Blog key={blog.id} blog={blog} />)}
+      <Togglable buttonLabel={'Create New Blog'}>
       <h1>Create New</h1>
       {user && (
         <form onSubmit={handleSubmitBlog}>
@@ -130,6 +155,8 @@ const App = () => {
           <button type="submit" className='Button'>Create</button>
         </form>
       )}
+      </Togglable>
+
     </div>
   );
 };
