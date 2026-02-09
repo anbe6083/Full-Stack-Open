@@ -4,7 +4,7 @@ const expandedBlog = () => {
   return {};
 };
 
-const Blog = ({blog}) => {
+const Blog = ({blog, handleLike}) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,7 +18,11 @@ const Blog = ({blog}) => {
       <Togglable buttonLabel="Show" closeLabel={'Hide'}>
         {blog.url}
         <br />
-        Likes: {blog.likes} <button>like</button>
+        Likes:
+        {' '}
+        {blog.likes}
+        {' '}
+        <button onClick={() => handleLike (blog)}>like</button>
         <br />
         {blog.author}
         <br />

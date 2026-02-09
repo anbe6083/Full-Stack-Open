@@ -84,6 +84,12 @@ const App = () => {
     window.localStorage.removeItem("LoggedInUser")
     setUser(null)
   }
+
+  const handleLike = async (blog) => {
+    const updatedBlog = {...blog, likes: blog.likes + 1}
+    await blogService.updateLikes(updatedBlog)
+    setBlogs(blogs.map(b => b.id === blog.id ? updatedBlog : b))
+  }
   return (
     <div>
       {notification &&
@@ -104,7 +110,7 @@ const App = () => {
       )}
       <h2>blogs</h2>
       {!user && loginForm ()}
-      {user && blogs.map (blog => <Blog key={blog.id} blog={blog} />)}
+      {user && blogs.map (blog => <Blog key={blog.id} blog={blog} handleLike={handleLike} />)}
       <Togglable buttonLabel={'Create New Blog'} closeLabel={'Cancel'}>
       <h1>Create New</h1>
       {user && (
