@@ -102,18 +102,9 @@ test ('BlogForm should receive the correct details of new blog', async () => {
     title: 'Bob Loblaws Law Blog',
     url: 'http://blogurl.com',
   };
-  const setNotificationHandler = vi.fn ();
-  const setBlogsHandler = vi.fn ();
+  const createBlogHandler = vi.fn ();
   const user = userEvent.setup ();
-
-  render (
-    <BlogForm
-      blogs={[]}
-      setNotification={setNotificationHandler}
-      setBlogs={setBlogsHandler}
-    />
-  );
-
+  render (<BlogForm createBlog={createBlogHandler} />);
   const titleInput = screen.getByLabelText ('Title', {exact: false});
   const authorInput = screen.getByLabelText ('Author', {exact: false});
   const urlInput = screen.getByLabelText ('Url', {exact: false});
@@ -129,5 +120,10 @@ test ('BlogForm should receive the correct details of new blog', async () => {
   await user.type (urlInput, blogObj.url);
   await user.click (createBtn);
 
-  console.log (setBlogsHandler.mock.calls[0][0]);
+  expect (createBlogHandler.mock.calls).toHaveLength (1);
+  expect (createBlogHandler.mock.calls[0][0]).toEqual ({
+    title: blogObj.title,
+    author: blogObj.author,
+    url: blogObj.url,
+  });
 });

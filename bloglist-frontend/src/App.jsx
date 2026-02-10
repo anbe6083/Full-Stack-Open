@@ -94,6 +94,15 @@ const App = () => {
     setBlogs(blogs.filter(b => b.id !== blog.id ))
   }
 
+  const handleCreateBlog = async (blogObject) => {
+    const returnedBlog = await blogService.createBlog(blogObject);
+    setBlogs(blogs.concat(returnedBlog));
+    setNotification(`A new blog: "${blogObject.title}" by ${blogObject.author} was added`);
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  }
+
   const handleLike = async (blog) => {
     const updatedBlog = {...blog, likes: blog.likes + 1}
     await blogService.updateLikes(updatedBlog)
@@ -123,7 +132,7 @@ const App = () => {
       <Togglable buttonLabel={'Create New Blog'} closeLabel={'Cancel'}>
       <h1>Create New</h1>
       {user && (
-        <BlogForm setNotification={setNotification} setBlogs={setBlogs} blogs={blogs} />
+        <BlogForm createBlog={handleCreateBlog} />
       
       )}
       </Togglable>
