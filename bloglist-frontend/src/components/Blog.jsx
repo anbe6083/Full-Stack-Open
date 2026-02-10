@@ -1,10 +1,6 @@
-import {useState} from 'react';
 import Togglable from '../components/Togglable';
-const expandedBlog = () => {
-  return {};
-};
 
-const Blog = ({blog, handleLike}) => {
+const Blog = ({blog, handleLike, handleDelete}) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -22,10 +18,9 @@ const Blog = ({blog, handleLike}) => {
         {' '}
         {blog.likes}
         {' '}
-        <button onClick={() => handleLike (blog)}>like</button>
+        <button id="like-button" onClick={() => handleLike (blog)}>like</button>
         <br />
-        {blog.author}
-        <br />
+        <button onClick={() => handleDelete (blog)}>Remove</button>
       </Togglable>
     </div>
   );

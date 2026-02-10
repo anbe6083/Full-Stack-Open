@@ -88,6 +88,12 @@ const App = () => {
     setUser(null)
   }
 
+  const handleDelete = async (blog) => {
+    window.confirm(`Remove ${blog.title} by ${blog.author}`)
+    await blogService.deleteBlog(blog.id)
+    setBlogs(blogs.filter(b => b.id !== blog.id ))
+  }
+
   const handleLike = async (blog) => {
     const updatedBlog = {...blog, likes: blog.likes + 1}
     await blogService.updateLikes(updatedBlog)
@@ -113,7 +119,7 @@ const App = () => {
       )}
       <h2>blogs</h2>
       {!user && loginForm ()}
-      {user && blogs.map (blog => <Blog key={blog.id} blog={blog} handleLike={handleLike} />)}
+      {user && blogs.map (blog => <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />)}
       <Togglable buttonLabel={'Create New Blog'} closeLabel={'Cancel'}>
       <h1>Create New</h1>
       {user && (
