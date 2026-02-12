@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import Person from "./models/person.js";
-
 const app = express();
 
 const errorHandler = (error, request, response, next) => {
@@ -133,5 +132,5 @@ app.use(unknownEndpoint);
 app.use(errorHandler);
 
 const PORT = process.env.PORT;
-app.listen(PORT);
+app.listen(PORT, () => {});
 console.log("Server running on port", PORT);

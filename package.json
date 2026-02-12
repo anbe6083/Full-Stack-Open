@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "cross-env": "^10.1.0",
+    "supertest": "^7.2.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.2.3"
+  },
+  "scripts": {
+    "test": "playwright test --project chromium",
+    "test:report": "playwright show-report",
+    "start:test": "cross-env NODE_ENV=test node --watch index.js"
+  }
+}
