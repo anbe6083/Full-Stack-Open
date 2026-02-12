@@ -49,5 +49,19 @@ describe("Blog app", () => {
         page.getByText(`${userCredentials.name} is logged in`),
       ).toBeVisible();
     });
+    test("Should fail with incorrect credentials", async ({ page }) => {
+      const usernameInput = page.getByLabel("Username");
+      await expect(usernameInput).toBeVisible();
+      await usernameInput.fill("incorrect_username");
+      const passwordInput = page.getByLabel("Password");
+      await expect(passwordInput).toBeVisible();
+      await passwordInput.fill("incorrectPassword");
+      const loginBtn = page.getByRole("button", { name: "Login" });
+      await expect(loginBtn).toBeVisible();
+      await loginBtn.click();
+      await expect(
+        page.getByText(`Incorrect username or password`),
+      ).toBeVisible();
+    });
   });
 });
