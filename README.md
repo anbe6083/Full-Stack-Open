@@ -4,7 +4,7 @@ This repository contains project work for a full-stack application, likely as pa
 
 ## Goal of this project
 
-Goal of this project is to create a full stack application including: frontend and backend development, unit testing, try out a new E2E testing framework (Playwright), and deploying the application using Render.
+Goal of this project is to create a full stack application including: frontend and backend development, unit testing, try out a new E2E testing framework (Playwright), state management using Redux, and deploying the application using Render.
 
 ## Project Structure
 
@@ -60,4 +60,5 @@ Make sure you have Node.js and npm installed on your machine.
     npm run dev
     ```
     The frontend application will be available at `http://localhost:5173` (or another port specified by Vite).
+
 
