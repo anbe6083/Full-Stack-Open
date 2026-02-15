@@ -11,6 +11,5 @@ node_modules
 # example directories
 frontend/
 backend/
-
 # example files
 tests/note_app.spec.js
