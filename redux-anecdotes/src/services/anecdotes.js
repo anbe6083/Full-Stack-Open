@@ -20,4 +20,19 @@ const createNew = async (content) => {
   return response.json();
 };
 
-export default { getAll, createNew };
+const updateVote = async (anecdote) => {
+  const options = {
+    method: "PUT",
+    body: JSON.stringify({
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    }),
+  };
+  const response = await fetch(`${baseUrl}/${anecdote.id}`, options);
+  if (!response.ok) {
+    throw new Error("Problem updating anecdote");
+  }
+  return response.json();
+};
+
+export default { getAll, createNew, updateVote };

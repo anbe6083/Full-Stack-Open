@@ -3,13 +3,12 @@ import NoteForm from './components/NoteForm';
 import Notes from './components/Notes';
 import VisibilityFilter from './components/VisibilityFilter';
 import {useEffect} from 'react';
-import noteService from './services/notes';
-import {setNotes} from './reducers/noteReducers';
+import {initializeNotes} from './reducers/noteReducers';
 const App = () => {
   const dispatch = useDispatch ();
   useEffect (
     () => {
-      noteService.getAll ().then (notes => dispatch (setNotes (notes)));
+      dispatch (initializeNotes ());
     },
     [dispatch]
   );
