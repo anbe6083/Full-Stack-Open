@@ -1,5 +1,5 @@
 import {useDispatch} from 'react-redux';
-import {filterChange} from '../reducers/fiterReducer';
+import {filterChange} from '../reducers/filterReducer';
 
 const VisibilityFilter = () => {
   const dispatch = useDispatch ();
