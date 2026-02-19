@@ -13,3 +13,4 @@ frontend/
 backend/
 # example files
 tests/note_app.spec.js
+hook-counter/

@@ -5,6 +5,10 @@ import Filter from './components/Filter';
 import Notification from './components/Notification';
 import {useDispatch} from 'react-redux';
 import {populateAnecdotes} from './reducers/anecdoteReducer';
+import NotificationContext from './context/NotificationContext';
+import {NotificationContextProvider} from './context/NotificationContext';
+import {useReducer} from 'react';
+
 const App = () => {
   const dispatch = useDispatch ();
   useEffect (
@@ -15,13 +19,15 @@ const App = () => {
   );
 
   return (
-    <div>
-      <h1>Anecdotes</h1>
-      <Notification />
-      <Filter />
-      <Anecdotes />
-      <AnecdoteForm />
-    </div>
+    <NotificationContextProvider>
+      <div>
+        <h1>Anecdotes</h1>
+        <Notification />
+        <Filter />
+        <Anecdotes />
+        <AnecdoteForm />
+      </div>
+    </NotificationContextProvider>
   );
 };
 
